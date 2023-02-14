@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>GET A SINGLE NOTE</h1>
+      <span>Enter the id of the note: </span>
+      <input type="text" id="idNote" />
+      <br /><br />
+      <button id="btn">Get one note</button>
+      <p id="data"></p>
+      <script>
+        const dataP = document.getElementById("data");
+        const btn = document.getElementById("btn");
+        const idNote = document.getElementById("idNote");
+
+        getNote = async () => {
+          const id = idNote.value;
+          if (id !== "") {
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/notes/" + id
+            );
+            if (!response.ok) {
+              dataP.innerHTML = `User Does not exist`;
+            } else {
+              const data = await response.json();
+              dataP.innerHTML = `
+            <h2>Title: ${data.title}</h2>
+            <p>Body: ${data.body}</p>`;
+            }
+          } else {
+            dataP.innerHTML = `Please enter an id`;
+          }
+        };
+
+        btn.addEventListener("click", async () => {
+          getNote();
+        });
+      </script>
+      <!-------------------------------------------------------------------------------------------->
+      <br /><br />
+      <hr />
+      <h1>GET ALL THE NOTES</h1>
+      <br /><br />
+      <button id="btn2">Get all the notes</button>
+      <p id="allNotesP"></p>
+      <script>
+        const btn2 = document.getElementById("btn2");
+        const allNotesP = document.getElementById("allNotesP");
+
+        getNotes = async () => {
+          const response = await fetch("http://127.0.0.1:8000/api/notes/");
+          const data = await response.json();
+          allNotesP.innerHTML = `
+        ${data.map((note) => {
+          return `
+            <div>
+            <h2>Title: ${note.title}</h2>
+            <p><strong>ID:</strong> ${note.id}</p>
+            <p><strong>Body:</strong> ${note.body}</p>
+            <p><strong>Updated At:</strong> ${note.updated_at}</p>
+            <p><strong>Created At:</strong> ${note.created_at}</p>
+            </div>`;
+        })}        
+        `;
+        };
+
+        btn2.addEventListener("click", async () => {
+          getNotes();
+        });
+      </script>
+      <!-------------------------------------------------------------------------------------------->
+      <br /><br />
+      <hr />
+      <h1>UPDATE A NOTE</h1>
+      <br /><br />
+      <br />
+      <span>Enter the id of the note you want to update: </span><br />
+      Id : <input type="text" id="idNote2" /> <br /><br />
+      <div>New Title</div>
+      <input type="text" id="newTitle" />
+      <br /><br />
+      <div>New Body :</div>
+      <textarea name="" id="bodyTextArea" cols="30" rows="10"></textarea>
+      <br /><br />
+      <button id="btn3">Update a note</button>
+      <script>
+        const btn3 = document.getElementById("btn3");
+        const noteId = document.getElementById("idNote2");
+        const newTitle = document.getElementById("newTitle");
+        const bodyTextArea = document.getElementById("bodyTextArea");
+
+        updateNote = async () => {
+          nt = noteId.value;
+
+          if (nt == "") {
+            alert("Please enter an id");
+          } else {
+            if (newTitle.value == "" || bodyTextArea.value == "") {
+              alert("Please enter a title/body");
+            } else {
+              fetch(`http://127.0.0.1:8000/api/notes/${nt}/update/`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  title: newTitle.value,
+                  body: bodyTextArea.value,
+                }),
+              });
+            }
+          }
+        };
+
+        btn3.addEventListener("click", async () => {
+          updateNote();
+        });
+      </script>
+      <!-------------------------------------------------------------------------------------------->
+      <br /><br />
+      <hr />
+      <h1>DELETE A NOTE</h1>
+      <span>Enter the id of the note you want to delete: </span><br />
+      Id : <input type="text" id="idNote3" /> <br /><br />
+      <button id="btnDelete">Delete a note</button>
+      <script>
+        const btnDelete = document.getElementById("btnDelete");
+        const idNote3 = document.getElementById("idNote3");
+
+        deleteNote = async () => {
+          nt = idNote3.value;
+
+          if (nt == "") {
+            alert("Please enter an id");
+          } else {
+            fetch(`http://127.0.0.1:8000/api/notes/${nt}/delete/`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+          }
+        };
+
+        btnDelete.addEventListener("click", async () => {
+          deleteNote();
+        });
+      </script>
+      <!-------------------------------------------------------------------------------------------->
+      <br /><br />
+      <hr />
+      <br /><br />
+      <h1>CREATE A NEW NOTE</h1>
+      <div>Title</div>
+      <input type="text" id="titleC" />
+      <br /><br />
+      <div>Body :</div>
+      <textarea name="" id="bodyTextAreaC" cols="30" rows="10"></textarea>
+      <br /><br />
+      <button id="btnCreate">Create a note</button>
+      <script>
+        const btnCreate = document.getElementById("btnCreate");
+        const titleC = document.getElementById("titleC");
+        const bodyTextAreaC = document.getElementById("bodyTextAreaC");
+
+        createNote = async () => {
+          if (titleC.value == "" || bodyTextAreaC.value == "") {
+            alert("Please enter a title/body");
+          } else {
+            fetch(`http://127.0.0.1:8000/api/notes/create/`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                title: titleC.value,
+                body: bodyTextAreaC.value,
+              }),
+            });
+          }
+        };
+        btnCreate.addEventListener("click", async () => {
+          createNote();
+        });
+      </script>
+      <!-------------------------------------------------------------------------------------------->
+    </div>
+  </body>
+</html>
