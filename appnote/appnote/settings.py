@@ -132,8 +132,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DATETIME_FORMAT': '%B %d, %Y',  # returns November 8, 2021
 
-}
 
